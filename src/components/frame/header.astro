@@ -1,0 +1,28 @@
+---
+import config from '../../config.ts';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  isHome?: boolean;
+}
+
+const { isHome = false } = Astro.props;
+---
+
+{
+  /**
+   * use `100svh` instead of `100dvh`
+   * https://piccalil.li/blog/a-more-modern-css-reset/#:~:text=I%20like%20a,to%20change%20it!
+   */
+}
+<header class="sticky top-0 z-10 bg-[#111111]">
+  <nav class="text-[length:--fluid(0.875rem,1rem,24rem,40rem)] font-bold text-white">
+    <ul class="wrapper flex max-w-none items-center gap-x-[--fluid(1rem,1.5rem,24rem,40rem)] px-10">
+      <li class="mr-auto">
+        <a class="block py-2" href="/" class:list={isHome ? 'pointer-events-none' : ''}>
+          <Icon name="logo" class="h-auto w-35" role="img" aria-label={config.siteTitle} />
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>

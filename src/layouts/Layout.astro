@@ -1,17 +1,80 @@
 ---
+import Header from '../components/frame/header.astro';
+import Footer from '../components/frame/footer.astro';
+import appleTouchIconImage from '../assets/apple-touch-icon.png';
+import faviconImage from '../assets/favicon.svg';
+import defaultOpenGraphImage from '../assets/ogp.png';
+import config from '../config.ts';
 import '../styles/global.css';
+
+interface BaseProps {
+  isHome?: false | undefined;
+  is404?: false | undefined;
+  title: string;
+  description?: string | undefined;
+  ogType?: 'website' | 'article' | undefined;
+  ogImage?: string | undefined;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface GeneralProps extends BaseProps {}
+
+interface HomeProps extends Omit<BaseProps, 'isHome' | 'title'> {
+  isHome: true;
+  tagline: string;
+}
+
+interface NotFoundProps extends Omit<BaseProps, 'is404'> {
+  is404: true;
+}
+
+type Props = GeneralProps | HomeProps | NotFoundProps;
+
+const isHome = Astro.props.isHome === true;
+const is404 = Astro.props.is404 === true;
+
+const { description, ogType = 'website', ogImage = defaultOpenGraphImage.src } = Astro.props;
+
+const resolvedOgImage = new URL(ogImage, Astro.url);
 ---
 
-<!doctype html>
-<html lang="en">
+<html
+  class:list={[
+    'bg-white wrap-anywhere text-slate-800 [scrollbar-gutter:stable] [text-autospace:normal]',
+    // https://schepp.dev/posts/smooth-scrolling-and-page-search/
+    'motion-safe:focus-within:scroll-smooth',
+  ]}
+  lang={config.lang}
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro Basics</title>
+    <title
+      set:html={[!isHome && Astro.props.title, config.siteTitle].filter(Boolean).join(' &#8211; ')}
+    />
+    {description && <meta name="description" content={description} />}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content={`@${config.twitter}`} />
+    <meta name="twitter:title" content={isHome ? config.siteTitle : Astro.props.title} />
+
+    <meta property="og:title" content={isHome ? config.siteTitle : Astro.props.title} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:url" content={Astro.url} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:site_name" content={config.siteTitle} />
+    <meta property="og:locale" content={`${config.lang}_${config.region}`} />
+
+    <link rel="apple-touch-icon" href={appleTouchIconImage.src} />
+    {!is404 && <link rel="canonical" href={Astro.url} />}
+    <link rel="icon" href={faviconImage.src} type="image/svg+xml" />
+
+    <script src="../scripts/main.ts"></script>
   </head>
-  <body>
+  <body class="min-h-svh">
+    <Header isHome={isHome} />
     <slot />
+    <Footer />
   </body>
 </html>
