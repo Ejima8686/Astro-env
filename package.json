@@ -16,11 +16,7 @@
     "test": "vitest --passWithNoTests"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@tailwindcss/vite": "^4.1.12",
-    "astro": "^5.12.9",
-    "tailwindcss": "^4.1.12",
-    "typescript": "^5.9.2"
+    "@astrojs/sitemap": "^3.4.2",
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^8.39.1",
